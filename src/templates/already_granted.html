@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>You already granted consent</title>
+</head>
+<body>
+	<h1>You already granted consent</h1>
+	<p>You already granted consent for data processing (reason: {{ consent.request.reason }}). If you want to revoke it, you may do it by <a href="{{consent.revoke_link()}}">clicking here</a>. If you have any questions, or want to do anything except granting/revoking this software, please contact us at <a href="mailto:{{consent.request.contact}}">{{consent.request.contact}}</a></p>
+</body>
+</html>
