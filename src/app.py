@@ -62,6 +62,7 @@ def consent(verification, request_id, email):
 			msg['To'] = email
 			msg['From'] = 'Wikimedia Ceska republika <info@wikimedia.cz>'
 			s.sendmail("info@wikimedia.cz", email, msg.as_string())
+			s.quit()
 			return render_template('consent_granted.html', consent=c)
 		else:
 			return render_template('unsuccessful_verification.html', consent=c)
@@ -90,6 +91,7 @@ def revoke(verification, request_id, email):
 			msg['To'] = r.contact
 			msg['From'] = 'System pro spravu souhlasu se zpracovanim osobnich udaju <souhlasy@wikimedia.cz>'
 			s.sendmail('souhlasy@wikimedia.cz', r.contact, msg.as_string())
+			s.quit()
 			return render_template('consent_revoked.html', consent=Consent(email=email, request_id=request_id))
 		else:
 			return render_template('unsuccessful_verification.html', consent=c)
