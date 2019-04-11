@@ -74,20 +74,21 @@ def revoke(verification, request_id, email):
 		if c.verification_string() == verification:
 			db.session.delete(c)
 			db.session.commit()
+			r = Request.query.get(request_id)
 			s = smtplib.SMTP(app.config.get('SMTP_HOST'))
 			s.ehlo()
-			mailtext = render_template('consent_revoked_mail.html', consent=Consent(email=email, request_id=request_id), request=Request.query.get(request_id))
+			mailtext = render_template('consent_revoked_mail.html', consent=Consent(email=email, request_id=request_id), request=r)
 			msg = MIMEText(mailtext, 'html')
 			msg['Subject'] = '[WMČR] Odvolání souhlasu se zpracováním osobních údajů bylo úspěšné'
 			msg['To'] = email
 			msg['From'] = 'Wikimedia Ceska republika <souhlasy@wikimedia.cz>'
 			s.sendmail("souhlasy@wikimedia.cz", email, msg.as_string())
-			mailtext = render_template('consent_revoked_admin_email.html', consent=Consent(email=email, request_id=request_id), request=Request.query.get(request_id))
+			mailtext = render_template('consent_revoked_admin_email.html', consent=Consent(email=email, request_id=request_id), request=r)
 			msg = MIMEText(mailtext, 'html')
 			msg['Subject'] = ['[WMČR, souhlasy] Uživatel %s odvolal souhlas se zpracováním osobních údajů']
-			msg['To'] = Request.query.get(request_id).contact
+			msg['To'] = r.contact
 			msg['From'] = 'System pro spravu souhlasu se zpracovanim osobnich udaju <souhlasy@wikimedia.cz>'
-			s.sendmail('souhlasy@wikimedia.cz', Request.query.get(request_id).contact, msg.as_string())
+			s.sendmail('souhlasy@wikimedia.cz', r.contact, msg.as_string())
 			return render_template('consent_revoked.html', consent=Consent(email=email, request_id=request_id))
 		else:
 			return render_template('unsuccessful_verification.html', consent=c)
