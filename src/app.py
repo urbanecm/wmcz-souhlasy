@@ -6,6 +6,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 import yaml
 import hashlib
+import smtplib
 
 app = Flask(__name__)
 
@@ -50,6 +51,18 @@ def consent(verification, request_id, email):
 		if c.verification_string() == verification:
 			db.session.add(c)
 			db.session.commit()
+			s = smtplib.SMTPS(app.config('SMTP_HOST'))
+			s.ehlo()
+			mailtext = render_template('consent_granted_email.html', consent=c)
+			msg = """From: Wikimedia Ceska republika <info@wikimedia.cz>
+To: %s
+MIME-Version: 1.0
+Content-type: text/html
+Subject: [WMČR] Udělení souhlasu se zpracováním osobních údajů bylo úspěšné
+
+%s
+			""" % (email, mailtext)
+			s.sendmail("info@wikimedia.cz", email, msg)
 			return render_template('consent_granted.html', consent=c)
 		else:
 			return render_template('unsuccessful_verification.html', consent=c)
