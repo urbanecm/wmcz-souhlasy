@@ -9,6 +9,7 @@ import hashlib
 import smtplib
 
 app = Flask(__name__)
+application = app
 
 # Load configuration from YAML file
 __dir__ = os.path.dirname(__file__)
