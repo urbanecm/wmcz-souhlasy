@@ -83,6 +83,8 @@ def revoke(verification, request_id, email):
 			msg['To'] = email
 			msg['From'] = 'Wikimedia Ceska republika <souhlasy@wikimedia.cz>'
 			s.sendmail("souhlasy@wikimedia.cz", email, msg.as_string())
+			s.quit()
+			s = smtplib.SMTP(app.config.get('SMTP_HOST'))
 			mailtext = render_template('consent_revoked_admin_email.html', consent=Consent(email=email, request_id=request_id), request=r)
 			msg = MIMEText(mailtext, 'html')
 			msg['Subject'] = ['[WMČR, souhlasy] Uživatel %s odvolal souhlas se zpracováním osobních údajů']
