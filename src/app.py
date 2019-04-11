@@ -60,8 +60,15 @@ def consent(verification, request_id, email):
 			msg = MIMEText(mailtext, 'html')
 			msg['Subject'] = '[WMČR] Udělení souhlasu se zpracováním osobních údajů bylo úspěšné'
 			msg['To'] = email
-			msg['From'] = 'Wikimedia Ceska republika <info@wikimedia.cz>'
-			s.sendmail("info@wikimedia.cz", email, msg.as_string())
+			msg['From'] = 'Wikimedia Ceska republika <souhlasy@wikimedia.cz>'
+			s.sendmail("souhlasy@wikimedia.cz", email, msg.as_string())
+			if c.request.inform_about_consent:
+				mailtext = render_template('consent_granted_admin_email.html', consent=c)
+				msg = MIMETExt(mailtext, 'html')
+				msg['Subject'] = '[WMČR, souhlasy] Uživatel %s udělil souhlas se zpracováním osobních údajů'
+				msg['To'] = c.request.contact
+				msg['From'] = 'System pro spravu souhlasu se zpracovanim osobnich udaju <souhlasy@wikimedia.cz>'
+				s.sendmail('souhlasy@wikimedia.cz', c.request.contact, msg.as_string())
 			s.quit()
 			return render_template('consent_granted.html', consent=c)
 		else:
