@@ -74,6 +74,14 @@ def revoke(verification, request_id, email):
 		if c.verification_string() == verification:
 			db.session.delete(c)
 			db.session.commit()
+			s = smtplib.SMTP(app.config.get('SMTP_HOST'))
+			s.ehlo()
+			mailtext = render_template('consent_revoked_mail.html', consent=Consent(email=email, request_id=request_id), request=Request.query.get(request_id))
+			msg = MIMEText(mailtext, 'html')
+			msg['Subject'] = '[WMČR] Odvolání souhlasu se zpracováním osobních údajů bylo úspěšné'
+			msg['To'] = email
+			msg['From'] = 'Wikimedia Ceska republika <info@wikimedia.cz>'
+			s.sendmail("info@wikimedia.cz", email, msg.as_string())
 			return render_template('consent_revoked.html', consent=Consent(email=email, request_id=request_id))
 		else:
 			return render_template('unsuccessful_verification.html', consent=c)
