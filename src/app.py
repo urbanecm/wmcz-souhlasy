@@ -25,6 +25,7 @@ class Request(db.Model):
 	name = db.Column(db.String(80), nullable=False)
 	reason = db.Column(db.Text, nullable=False)
 	contact = db.Column(db.String(80), nullable=False)
+	inform_about_consent = db.Column(db.Boolean, default=False, nullable=False)
 
 class Consent(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
